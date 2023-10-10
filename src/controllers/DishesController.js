@@ -16,6 +16,24 @@ class DishesController{
         return res.status(201).json({ id: newDishId });
     }
 
+    async put (req, res){
+        const { name, description, price, type, ingredients } = req.body
+        const { id } = req.params
+
+        const updatedDish = await knex('dishes')
+                                  .where({ id })
+                                  .update({
+                                     name,
+                                     description,
+                                     price,
+                                     type,
+                                     ingredients,
+                                     updated_at: knex.fn.now()
+                                   })
+
+        return res.status(201).json({ updatedDish });
+    }
+
     async show (req, res) {
         const { id } = req.params
 

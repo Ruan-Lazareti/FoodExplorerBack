@@ -6,9 +6,13 @@ class DishCreateService {
     }
 
     async execute({ name, description, price, type, ingredients }) {
-        const dishCreated = await this.dishRepository.create({ name, description, price, type, ingredients })
+        try {
+            const dishCreated = await this.dishRepository.create({ name, description, price, type, ingredients })
 
-        return dishCreated
+            return dishCreated
+        } catch {
+            alert('Erro no Service')
+        }            
     }
 }
 

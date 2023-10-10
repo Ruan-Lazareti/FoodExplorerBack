@@ -5,28 +5,25 @@ const DiskStorage = require('../providers/diskStorage')
 
 class DishesPhotoController {
     async update(req, res) {
-        console.log(req.file)
-        
-        const diskStorage = new DiskStorage()
-        
         const { dish_id } = req.params
         const photoFilename = req.file.filename 
-        
-        const dish = await knex('dishes').where({ id: dish_id })
+
+        const diskStorage = new DiskStorage()
+        const dish = await knex('dishes').where({ id: dish_id }).first()
         
         if(!dish){
-            throw new AppError('Ingrediente não existe')
+            throw new AppError('Prato não existe')
         }
         
-        if(dish[0].photo){
+        if(dish.photo){
             await diskStorage.deleteFile(dish[0].photo)
         }
         
-        await diskStorage.saveFile(photoFilename)
+        const filename = await diskStorage.saveFile(photoFilename)
 
-        dish[0].photo = photoFilename
+        dish.photo = filename
 
-        await knex('dishes').update(dish[0]).where({ id: dish_id })
+        await knex('dishes').update(dish).where({ id: dish_id })
 
         return res.json(dish)
     }
